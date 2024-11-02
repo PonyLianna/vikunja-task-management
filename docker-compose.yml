@@ -48,12 +48,6 @@ services:
       - api
     volumes:
       - ./n8n_data:/home/node/.n8n
-  nocodb:
-    image: "nocodb/nocodb:latest"
-    ports:
-      - 8020:8080
-    networks:
-      -  api
 networks:
   vikunja:  # creating this network is necessary or the above two containers can't talk to each other
   api:
