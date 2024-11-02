@@ -49,5 +49,5 @@ services:
     volumes:
       - ./n8n_data:/home/node/.n8n
 networks:
-  vikunja:  # creating this network is necessary or the above two containers can't talk to each other
+  vikunja: 
   api:
