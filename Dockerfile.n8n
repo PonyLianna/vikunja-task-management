@@ -1,0 +1,11 @@
+FROM docker.n8n.io/n8nio/n8n:latest
+
+# Switch to root user to install packages
+USER root
+
+# Install n8n-nodes-vikunja
+RUN cd /usr/local/lib/node_modules/n8n && \
+    npm install n8n-nodes-vikunja
+
+# Switch back to node user
+USER node
