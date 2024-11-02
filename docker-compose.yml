@@ -1,11 +1,12 @@
 version: '3'
 services:
   vikunja:
+    env_file: ".env"
     image: vikunja/vikunja
     environment:
       VIKUNJA_DATABASE_HOST: ${VIKUNJA_DATABASE_HOST}
       VIKUNJA_DATABASE_PASSWORD: ${VIKUNJA_DATABASE_PASSWORD}
-      VIKUNJA_DATABASE_TYPE: ${VIKUNJA_DATABASE_TYPE}
+      VIKUNJA_DATABASE_TYPE: postgres
       VIKUNJA_DATABASE_USER: ${VIKUNJA_DATABASE_USER}
       VIKUNJA_DATABASE_DATABASE: ${VIKUNJA_DATABASE_DATABASE}
       VIKUNJA_SERVICE_JWTSECRET: ${VIKUNJA_SERVICE_JWTSECRET}
@@ -22,27 +23,27 @@ services:
     restart: unless-stopped
 
   db:
-    image: mariadb:10
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    env_file: ".env"
+    image: postgres:15-alpine
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - ./db:/var/lib/mysql
+      - ./db:/var/lib/postgresql/data
       - ./db/init.d:/docker-entrypoint-initdb.d
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$$MYSQL_PASSWORD"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 2s
       start_period: 30s
     ports:
-      - "${MYSQL_PORT}:3306"
+      - "${POSTGRES_PORT}:5432"
     networks:
       - database
 
   n8n:
+    env_file: ".env"
     build:
       context: .
       dockerfile: Dockerfile.n8n
@@ -56,16 +57,12 @@ services:
       - N8N_EDITOR_BASE_URL=${N8N_EDITOR_BASE_URL}
       # Database
       - DB_TYPE=${DB_TYPE}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_DATABASE=${DB_DATABASE}
+      - DB_POSTGRESDB_HOST=${DB_HOST}
+      - DB_POSTGRESDB_PORT=${DB_PORT}
+      - DB_POSTGRESDB_DATABASE=${DB_DATABASE}
       # db creds
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      # Additional DB settings
-      - DB_MAX_CONNECTIONS=${DB_MAX_CONNECTIONS}
-      - DB_RECONNECT_TRIES=${DB_RECONNECT_TRIES}
-      - DB_RECONNECT_TIMEOUT=${DB_RECONNECT_TIMEOUT}
+      - DB_POSTGRESDB_USER=${DB_USER}
+      - DB_POSTGRESDB_PASSWORD=${DB_PASSWORD}
     networks:
       - vikunja
       - database
