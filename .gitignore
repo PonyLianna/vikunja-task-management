@@ -2,3 +2,4 @@ db/*
 !db/init.d
 files
 n8n_data
+.env
