@@ -37,8 +37,8 @@ This project combines several open-source tools to create a comprehensive task m
   - Follow the [Vikunja N8N Integration Guide](https://vikunja.io/docs/n8n)
 
 ### 3. Database
-Default configuration uses MariaDB, but you can easily switch to:
-- PostgreSQL
+Default configuration uses PostgreSQL, but you can easily switch to:
+- MariaDB (Not supported by N8N, link: https://docs.n8n.io/hosting/configuration/supported-databases-settings/)
 - SQLite
 
 For alternative database setups, check the [Vikunja Docker Configuration Guide](https://vikunja.io/docs/full-docker-example)
