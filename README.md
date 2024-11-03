@@ -39,7 +39,7 @@ This project combines several open-source tools to create a comprehensive task m
 ### 3. Database
 Default configuration uses PostgreSQL, but you can easily switch to:
 - MariaDB (Not supported by N8N, link: https://docs.n8n.io/hosting/configuration/supported-databases-settings/)
-- SQLite
+- SQLite (you can run it without all this strange migrations and so on)
 
 For alternative database setups, check the [Vikunja Docker Configuration Guide](https://vikunja.io/docs/full-docker-example)
 
@@ -60,8 +60,8 @@ services:
 
 ## 📝 Important Notes
 - When connecting N8N with Vikunja, ensure the webhook URL is correctly configured
+- `db/init.d/01-init-n8n.sql` is a script allowing you pre setup all the things to work at the same environment (not sure how safe it's tho)
 - This is an experimental project aimed at testing the viability of self-hosted task management solutions
-- Suitable for small to medium-sized teams
 
 
 ---
