@@ -11,7 +11,7 @@ services:
       VIKUNJA_DATABASE_DATABASE: ${VIKUNJA_DATABASE_DATABASE}
       VIKUNJA_SERVICE_JWTSECRET: ${VIKUNJA_SERVICE_JWTSECRET}
     ports:
-      - "${VIKUNJA_PORT}:3456"
+      - "${VIKUNJA_PORT:-3456}:3456"
     volumes:
       - ./files:/app/vikunja/files
     networks:
@@ -26,19 +26,21 @@ services:
     env_file: ".env"
     image: postgres:15-alpine
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: postgres
     volumes:
-      - ./db:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
       - ./db/init.d:/docker-entrypoint-initdb.d
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
       interval: 2s
+      timeout: 2s
+      retries: 10
       start_period: 30s
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     networks:
       - database
 
@@ -48,7 +50,7 @@ services:
       context: .
       dockerfile: Dockerfile.n8n
     ports:
-      - "${N8N_PORT}:5678"
+      - "${N8N_PORT:-5678}:5678"
     environment:
       - N8N_HOST=${N8N_HOST}
       - N8N_PORT=${N8N_PORT}
@@ -56,11 +58,11 @@ services:
       - WEBHOOK_URL=${WEBHOOK_URL}
       - N8N_EDITOR_BASE_URL=${N8N_EDITOR_BASE_URL}
       # Database
-      - DB_TYPE=${DB_TYPE}
+      - DB_TYPE=postgresdb
       - DB_POSTGRESDB_HOST=${DB_HOST}
       - DB_POSTGRESDB_PORT=${DB_PORT}
       - DB_POSTGRESDB_DATABASE=${DB_DATABASE}
-      # db creds
+      # Database credentials
       - DB_POSTGRESDB_USER=${DB_USER}
       - DB_POSTGRESDB_PASSWORD=${DB_PASSWORD}
     networks:
@@ -72,6 +74,9 @@ services:
       db:
         condition: service_healthy
     restart: unless-stopped
+
+volumes:
+  postgres_data:
 
 networks:
   vikunja:
