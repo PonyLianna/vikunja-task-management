@@ -20,6 +20,8 @@ cd [repository-name]
 docker-compose up -d
 ```
 
+Then install ```n8n-nodes-vikunja``` through n8n GUI using this instruction: https://vikunja.io/docs/n8n
+
 ## 📖 How It Works
 
 This project combines several open-source tools to create a comprehensive task management solution:
