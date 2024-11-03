@@ -1,11 +1,22 @@
 FROM docker.n8n.io/n8nio/n8n:latest
 
-# Switch to root user to install packages
+# Switch to root to ensure proper permissions
 USER root
 
-# Install n8n-nodes-vikunja
-RUN cd /usr/local/lib/node_modules/n8n && \
-    npm install n8n-nodes-vikunja
+# Create necessary directories and set permissions
+RUN mkdir -p /home/node/.n8n/nodes && \
+    chown -R node:node /home/node/.n8n
 
-# Switch back to node user
+# Switch to node user for npm install
 USER node
+
+# Install the community node
+WORKDIR /home/node/.n8n/nodes
+RUN npm init -y
+RUN npm install n8n-nodes-vikunja
+
+# Verify installation
+RUN ls -la ~/.n8n/nodes
+
+# Set proper workdir for n8n
+WORKDIR /home/node
