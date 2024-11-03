@@ -2,7 +2,7 @@ version: '3'
 services:
   vikunja:
     env_file: ".env"
-    image: vikunja/vikunja
+    image: "vikunja/vikunja"
     environment:
       VIKUNJA_DATABASE_HOST: ${VIKUNJA_DATABASE_HOST}
       VIKUNJA_DATABASE_PASSWORD: ${VIKUNJA_DATABASE_PASSWORD}
@@ -46,9 +46,7 @@ services:
 
   n8n:
     env_file: ".env"
-    build:
-      context: .
-      dockerfile: Dockerfile.n8n
+    image: "docker.n8n.io/n8nio/n8n:latest"
     ports:
       - "${N8N_PORT:-5678}:5678"
     environment:
@@ -70,6 +68,7 @@ services:
       - database
     volumes:
       - ./n8n_data:/home/node/.n8n
+      - ./n8n_data/nodes:/home/node/.n8n/nodes
     depends_on:
       db:
         condition: service_healthy
